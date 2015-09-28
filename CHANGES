@@ -1,5 +1,8 @@
 Changelog for API-Facebook
 
-0.01 2015-07-14T05:45:23
- - Initial commit.
+0.02 2015-09-28T04:01:22
+ - Refactored to derive from API::Client.
 
+0.01 2015-07-14T05:45:47
+ - v0.01
+ - Initial commit.
