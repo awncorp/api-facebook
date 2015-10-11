@@ -1,14 +1,12 @@
 # ABSTRACT: Facebook.com API Client
 package API::Facebook;
 
-use namespace::autoclean -except => 'has';
-
 use Data::Object::Class;
-use Data::Object::Class::Syntax;
 use Data::Object::Signatures;
 
-use Data::Object qw(load);
-use Data::Object::Library qw(Str);
+use Data::Object::Library qw(
+    Str
+);
 
 extends 'API::Client';
 
@@ -18,21 +16,33 @@ our $DEFAULT_URL = "https://graph.facebook.com";
 
 # ATTRIBUTES
 
-has access_token => rw;
-
-# CONSTRAINTS
-
-req access_token => Str;
+has access_token => (
+    is       => 'rw',
+    isa      => Str,
+    required => 1,
+);
 
 # DEFAULTS
 
-def identifier => 'API::Facebook (Perl)';
-def url        => method { load('Mojo::URL')->new($DEFAULT_URL) };
-def version    => 1;
+has '+identifier' => (
+    default  => 'API::Facebook (Perl)',
+    required => 0,
+);
+
+has '+url' => (
+    default  => $DEFAULT_URL,
+    required => 0,
+);
+
+has '+version' => (
+    default  => 1,
+    required => 0,
+);
 
 # CONSTRUCTION
 
 after BUILD => method {
+
     my $identifier = $self->identifier;
     my $version    = $self->version;
     my $agent      = $self->user_agent;
@@ -42,11 +52,13 @@ after BUILD => method {
     $url->path("/v$version");
 
     return $self;
+
 };
 
 # METHODS
 
 method PREPARE ($ua, $tx, %args) {
+
     my $headers = $tx->req->headers;
     my $url     = $tx->req->url;
 
@@ -55,9 +67,11 @@ method PREPARE ($ua, $tx, %args) {
 
     # access token parameter
     $url->query->merge(access_token => $self->access_token) if $self->access_token;
+
 }
 
 method resource (@segments) {
+
     # build new resource instance
     my $instance = __PACKAGE__->new(
         access_token => $self->access_token,
@@ -79,6 +93,7 @@ method resource (@segments) {
 
     # return resource instance
     return $instance;
+
 }
 
 1;
